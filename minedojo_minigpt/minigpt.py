@@ -16,6 +16,7 @@ class MineDojoMiniGPT4:
 
         model_config = cfg.model_cfg
         model_config.device_8bit = args.gpu_id
+        model_config.prompt_path = ""  # Unset
 
         model = MiniGPT4.from_config(model_config).to('cuda:{}'.format(args.gpu_id))
 
