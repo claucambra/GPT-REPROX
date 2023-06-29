@@ -21,15 +21,9 @@ def build_current_task_prompt(task: str) -> str:
 
 class MineDojoMiniGPT4Conversation(ConversationWithImages):
     def __init__(self, 
-                 system: str = MINEDOJO_TASKPROMPT, 
-                 roles: tuple = ("Human", "Assistant"), 
-                 messages: list = [], 
-                 offset: int = 2, 
-                 sep: str = "###"):
+                 system: str = MINEDOJO_TASKPROMPT,
+                 roles: list[str] = ("Human", "Assistant"),
+                 messages: list[list[str]] = [],
+                 offset: int = 2):
         
-        super().__init__(self, 
-                         system=system, 
-                         roles=roles, 
-                         messages=messages, 
-                         offset=offset, 
-                         sep=sep)
+        super().__init__(system, roles, messages, offset)
