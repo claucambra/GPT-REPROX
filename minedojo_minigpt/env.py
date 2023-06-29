@@ -74,5 +74,19 @@ class MineDojoMiniGPT4Env:
         print("Environment remake: reset all the destroyed blocks!")
 
 
+    @staticmethod
+    def obs_rgb_transpose(obs: dict) -> np.ndarray:
+        """
+        MineDojo returns observation in (C, H, W) format.
+
+        Most libraries (Pillow, imageio) expect (H, W, C) format.
+
+        MiniGPT's Blip2EvalProcessor also expects (H, W, C) format as input,
+        despite it internally using torchvision's ToTensor transform when using
+        the eval vision processor. Torchvision's ToTensor converts (H, W, C) to 
+        (C, H, W).
+        """
+        return np.transpose(obs["rgb"], [1, 2, 0]).astype(np.uint8)
+
 
         
