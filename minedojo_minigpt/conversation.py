@@ -27,9 +27,9 @@ class MineDojoMiniGPT4Conversation(ConversationWithImages):
                  offset: int = 2, 
                  sep: str = "###"):
         
-        super.__init__(self, 
-                       system=system, 
-                       roles=roles, 
-                       messages=messages, 
-                       offset=offset, 
-                       sep=sep)
+        super().__init__(self, 
+                         system=system, 
+                         roles=roles, 
+                         messages=messages, 
+                         offset=offset, 
+                         sep=sep)
