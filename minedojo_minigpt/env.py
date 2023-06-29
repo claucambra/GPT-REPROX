@@ -6,21 +6,24 @@ import numpy as np
 import torch
 import argparse
 
+from typing import Any, Optional
+
 from .minigpt import MineDojoMiniGPT4
 
 
 class MineDojoMiniGPT4Env:
     def __init__(self,
-                 cmd_args: argparse.Namespace = None,
+                 cmd_args: Optional[argparse.Namespace] = None,
                  image_size: tuple[int, int] = (160, 256),
                  seed: int = 0,
                  biome: str = "plains",
-                 device: torch.device = None,
+                 device: Optional[torch.device] = None,
                  task_id: str = "harvest",
                  target_name: str = "log",
                  target_quantity: int = 1,
                  save_rgb: bool = False,
                  max_steps: int = 3000,
+                 render_mode: Optional[str] = "human",
                  **kwargs):
 
         # Essential arguments to create base env
