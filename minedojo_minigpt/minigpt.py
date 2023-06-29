@@ -8,7 +8,7 @@ from .conversation import MineDojoMiniGPT4Conversation, build_current_task_promp
 from MiniGPT4.minigpt4.common.config import Config
 from MiniGPT4.minigpt4.common.registry import registry
 from MiniGPT4.minigpt4.conversation.conversation import Chat
-
+from MiniGPT4.minigpt4.models.mini_gpt4 import MiniGPT4
 
 class MineDojoMiniGPT4:
     def __init__(self, args: argparse.Namespace):
