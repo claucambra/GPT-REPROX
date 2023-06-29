@@ -49,6 +49,9 @@ class MineDojoMiniGPT4Env(Env):
         self.max_step = max_steps
 
         self.__cur_step = 0
+        self.__first_reset = True
+        self.__reset_cmds = ["/kill @e[type=!player]", "/clear", "/kill @e[type=item]"]
+
         self.__task_string = task_id + " " + target_name + " " + str(target_quantity)
         self.__task_string = self.__task_string + "s" if target_quantity > 1 else self.__task_string
         self.__minigpt = MineDojoMiniGPT4(cmd_args)
@@ -83,9 +86,6 @@ class MineDojoMiniGPT4Env(Env):
             world_seed=self.seed,
             seed=self.seed,
             specified_biome=self.biome,
-            fast_reset=True,
-            fast_reset_random_teleport_range_low=0,
-            fast_reset_random_teleport_range_high=500,
             **self.kwargs)
 
         print("Environment remake: reset all the destroyed blocks!")
@@ -104,6 +104,11 @@ class MineDojoMiniGPT4Env(Env):
             self.__remake_env()
 
         self.__cur_step = 0
+
+        if not self.__first_reset:
+            for cmd in self.__reset_cmds:
+                self.base_env.unwrapped.execute_cmd(cmd)
+        self.__first_reset = False
 
         self.base_env.reset(move_flag=True, **options)  # reset after random teleport
         self.base_env.unwrapped.set_time(6000)
