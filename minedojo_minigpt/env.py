@@ -37,6 +37,8 @@ class MineDojoMiniGPT4Env:
         self.kwargs = kwargs  # should contain: initial inventory, initial mobs
 
         self.device = device
+
+        self.render_mode = render_mode
         self.save_rgb = save_rgb
 
         self.max_step = max_steps
@@ -123,6 +125,10 @@ class MineDojoMiniGPT4Env:
 
         return obs, reward, done, info
     
+
+    def render(self):
+        self.base_env.render(self.render_mode)
+
     
     @staticmethod
     def obs_rgb_transpose(obs: dict) -> np.ndarray:
