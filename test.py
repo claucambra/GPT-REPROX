@@ -26,6 +26,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--cfg-path", required=True, help="path to MiniGPT-4 configuration file.")
     parser.add_argument("--gpu-id", type=int, default=0, help="specify the gpu to load the MiniGPT-4 model.")
+    parser.add_argument(
+        "--options",
+        nargs="+",
+        help="override some settings in the MiniGPT-4 used config, the key-value pair "
+        "in xxx=yyy format will be merged into config file (deprecate), "
+        "change to --cfg-options instead.",
+    )
     parser.add_argument("--task", type=str, default="craft_stick")
     parser.add_argument("--episode-count", type=int, default=200)
     parser.add_argument("--seed", type=int, default=3)
