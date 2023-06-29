@@ -3,11 +3,11 @@
 
 import argparse
 
-from .conversation import MineDojoMiniGPT4Conversation, build_current_task_prompt
+from conversation import MineDojoMiniGPT4Conversation, build_current_task_prompt
 
-from ..MiniGPT4.minigpt4.common.config import Config
-from ..MiniGPT4.minigpt4.common.registry import registry
-from ..MiniGPT4.minigpt4.conversation.conversation import Chat
+from MiniGPT4.minigpt4.common.config import Config
+from MiniGPT4.minigpt4.common.registry import registry
+from MiniGPT4.minigpt4.conversation.conversation import Chat
 
 
 class MineDojoMiniGPT4:

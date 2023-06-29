@@ -9,7 +9,7 @@ import argparse
 from typing import Any, Optional
 from gymnasium import Env
 
-from .minigpt import MineDojoMiniGPT4
+from minigpt import MineDojoMiniGPT4
 
 
 MIN_REWARD = 0
