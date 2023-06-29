@@ -11,6 +11,10 @@ from typing import Any, Optional
 from .minigpt import MineDojoMiniGPT4
 
 
+MIN_REWARD = 0
+MAX_REWARD = 100
+
+
 class MineDojoMiniGPT4Env:
     def __init__(self,
                  cmd_args: Optional[argparse.Namespace] = None,
@@ -103,7 +107,7 @@ class MineDojoMiniGPT4Env:
         return obs, info
 
 
-    def step(self, act: dict):
+    def step(self, act: dict) -> tuple[dict, float, bool, bool, dict]:
         obs, _, done, info = self.base_env.step(act)
 
         rgb_image = self.obs_rgb_transpose(obs)
@@ -111,19 +115,20 @@ class MineDojoMiniGPT4Env:
 
         # Reward established as proximity to goal completion, 0 - 100
         reward = self.__minigpt.current_reward(obs)
-        assert reward >= 0 and reward <= 100
+        assert reward >= MIN_REWARD and reward <= MAX_REWARD
 
         self.__cur_step += 1
 
-        done = done or \
+        terminated = done or \
             obs["life_stats"]["life"] == 0 or \
-                self.__cur_step >= self.max_step or \
-                    reward == 100
+                    reward == MAX_REWARD
+        
+        truncated = self.__cur_step >= self.max_step
 
         if self.save_rgb:
             self.rgb_list.append(rgb_image)
 
-        return obs, reward, done, info
+        return obs, reward, terminated, truncated, info
     
 
     def render(self):
