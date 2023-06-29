@@ -62,7 +62,7 @@ class MineDojoMiniGPT4Env(Env):
         self.observation_space = self.base_env.observation_space
         self.action_space = self.base_env.action_space
         self.reward_range = (MIN_REWARD, MAX_REWARD)
-        self.np_random = self.base_env._rng
+        self.np_random = self.base_env.unwrapped._rng
         self.spec = self.base_env.spec
         self.spec.sim_name = self.spec.sim_name + "_minigpt"
 
