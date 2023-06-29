@@ -7,6 +7,7 @@ import torch
 import argparse
 
 from typing import Any, Optional
+from gymnasium import Env
 
 from .minigpt import MineDojoMiniGPT4
 
@@ -15,7 +16,7 @@ MIN_REWARD = 0
 MAX_REWARD = 100
 
 
-class MineDojoMiniGPT4Env:
+class MineDojoMiniGPT4Env(Env):
     def __init__(self,
                  cmd_args: Optional[argparse.Namespace] = None,
                  image_size: tuple[int, int] = (160, 256),
@@ -52,6 +53,13 @@ class MineDojoMiniGPT4Env:
 
         self.__remake_env()
 
+        # Compliance with gymnasium.Env
+        self.observation_space = self.base_env.observation_space
+        self.action_space = self.base_env.action_space
+        self.reward_range = (MIN_REWARD, MAX_REWARD)
+        self.np_random = self.base_env._rng
+        self.spec = self.base_env.spec
+        self.spec.sim_name = self.spec.sim_name + "_minigpt"
 
 
     def __del__(self):
