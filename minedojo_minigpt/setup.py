@@ -6,7 +6,7 @@ import os
 import torch
 
 from minedojo_minigpt.env import MineDojoMiniGPT4Env
-from task_config import setup_task_conf
+from .task_config import setup_task_conf
 
 
 def setup_minedojo_gpt_env(args: argparse.Namespace, device: torch.device) -> MineDojoMiniGPT4Env:
