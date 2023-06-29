@@ -20,5 +20,5 @@ def setup_minedojo_gpt_env(args: argparse.Namespace, device: torch.device) -> Mi
         cmd_args=args,
         seed=args.seed,
         device=device,
-        save_rgb=0,
+        save_rgb=False,
         **task_conf)
