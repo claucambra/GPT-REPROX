@@ -6,12 +6,12 @@ import argparse
 from stable_baselines3 import PPO
 
 from minedojo_minigpt.setup import setup_minedojo_gpt_env
-from minedojo_minigpt.env import MinecraftMiniGPT4Env
+from minedojo_minigpt.env import MineDojoMiniGPT4Env
 
 from utils.setup import set_device, set_seed
 
 
-def run_minedojo_test(args: argparse.Namespace, env: MinecraftMiniGPT4Env):
+def run_minedojo_test(args: argparse.Namespace, env: MineDojoMiniGPT4Env):
     ppo_agent = PPO("LnMlpPolicy", 
                     env, 
                     device=env.device, 
