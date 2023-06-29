@@ -74,6 +74,27 @@ class MineDojoMiniGPT4Env:
         print("Environment remake: reset all the destroyed blocks!")
 
 
+    def reset(self) -> tuple[dict, dict]:
+        self.__cur_step = 0
+
+        self.base_env.reset(move_flag=True)  # reset after random teleport
+        self.base_env.unwrapped.set_time(6000)
+        self.base_env.unwrapped.set_weather("clear")
+
+        # make agent fall onto the ground after teleport
+        for _ in range(4):
+            no_op_act = self.base_env.action_space.no_op()
+            obs, _, _, info = self.base_env.step(no_op_act)
+
+        rgb_image = self.obs_rgb_transpose(obs)
+        self.__minigpt.upload_img(rgb_image)
+
+        if self.save_rgb:
+            self.rgb_list = [rgb_image]
+
+        return obs, info
+
+
     @staticmethod
     def obs_rgb_transpose(obs: dict) -> np.ndarray:
         """
