@@ -81,15 +81,21 @@ class MineDojoMiniGPT4Env:
         print("Environment remake: reset all the destroyed blocks!")
 
 
-    def reset(self) -> tuple[dict, dict]:
+    # Duck typing methods for gymnasium.Env
+
     def close(self):
         if hasattr(self, "base_env"):
             self.base_env.close()
 
 
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None) -> tuple[dict, dict]:
+        if seed is not None:
+            self.seed = seed
+            self.__remake_env()
+
         self.__cur_step = 0
 
-        self.base_env.reset(move_flag=True)  # reset after random teleport
+        self.base_env.reset(move_flag=True, **options)  # reset after random teleport
         self.base_env.unwrapped.set_time(6000)
         self.base_env.unwrapped.set_weather("clear")
 
