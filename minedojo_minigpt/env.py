@@ -130,7 +130,7 @@ class MineDojoMiniGPT4Env(Env):
         self.__minigpt.upload_img(rgb_image)
 
         # Reward established as proximity to goal completion, 0 - 100
-        reward = self.__minigpt.current_reward(obs, self.__task_string)
+        reward = self.__minigpt.current_reward(self.__task_string)
         assert reward >= MIN_REWARD and reward <= MAX_REWARD
 
         self.__cur_step += 1

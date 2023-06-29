@@ -28,7 +28,7 @@ class MineDojoMiniGPT4:
 
     def current_reward(self, task: str) -> int:
         prompt = build_current_task_prompt(task)
-        self.__gpt.ask(prompt)
+        self.__gpt.ask(prompt, self.__gpt_conversation)
 
         text_reply, _ = self.__gpt.answer(self.__gpt_conversation, self.__gpt_conversation.images)
         assert isinstance(text_reply, str)
