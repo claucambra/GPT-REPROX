@@ -47,14 +47,12 @@ class MineDojoMiniGPT4Env:
         self.remake_env()
 
 
-    def __del__(self):
-        if hasattr(self, "base_env"):
-            self.base_env.close()
 
+    def __del__(self):
+        self.close()
 
     def remake_env(self):
-        if hasattr(self, "base_env"):
-            self.base_env.close()
+        self.close()
 
         if self.target_name.endswith("_nearby"):
             self.target_item_name = self.target_name[:-7]
@@ -78,6 +76,11 @@ class MineDojoMiniGPT4Env:
 
 
     def reset(self) -> tuple[dict, dict]:
+    def close(self):
+        if hasattr(self, "base_env"):
+            self.base_env.close()
+
+
         self.__cur_step = 0
 
         self.base_env.reset(move_flag=True)  # reset after random teleport
