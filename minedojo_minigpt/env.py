@@ -44,14 +44,14 @@ class MineDojoMiniGPT4Env:
         self.__cur_step = 0
         self.__minigpt = MineDojoMiniGPT4(cmd_args)
 
-        self.remake_env()
+        self.__remake_env()
 
 
 
     def __del__(self):
         self.close()
 
-    def remake_env(self):
+    def __remake_env(self):
         self.close()
 
         if self.target_name.endswith("_nearby"):
