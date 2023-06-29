@@ -14,6 +14,11 @@ MINEDOJO_TASKPROMPT = "Give the following image: <Img>ImageContent</Img>. " \
 
 CURRENT_STATE_PROMPT = "Generate a score from 0-100 based on how close you think the player is to completing the task. "
 
+
+def build_current_task_prompt(task: str) -> str:
+    return CURRENT_STATE_PROMPT + "The current task is: " + task + "."
+
+
 class MineDojoMiniGPT4Conversation(ConversationWithImages):
     def __init__(self, 
                  system: str = MINEDOJO_TASKPROMPT, 

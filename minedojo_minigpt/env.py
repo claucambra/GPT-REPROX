@@ -49,6 +49,8 @@ class MineDojoMiniGPT4Env(Env):
         self.max_step = max_steps
 
         self.__cur_step = 0
+        self.__task_string = task_id + " " + target_name + " " + str(target_quantity)
+        self.__task_string = self.__task_string + "s" if target_quantity > 1 else self.__task_string
         self.__minigpt = MineDojoMiniGPT4(cmd_args)
 
         self.__remake_env()
@@ -128,14 +130,14 @@ class MineDojoMiniGPT4Env(Env):
         self.__minigpt.upload_img(rgb_image)
 
         # Reward established as proximity to goal completion, 0 - 100
-        reward = self.__minigpt.current_reward(obs)
+        reward = self.__minigpt.current_reward(obs, self.__task_string)
         assert reward >= MIN_REWARD and reward <= MAX_REWARD
 
         self.__cur_step += 1
 
         terminated = done or \
             obs["life_stats"]["life"] == 0 or \
-                    reward == MAX_REWARD
+                reward == MAX_REWARD
         
         truncated = self.__cur_step >= self.max_step
 
@@ -163,5 +165,3 @@ class MineDojoMiniGPT4Env(Env):
         """
         return np.transpose(obs["rgb"], [1, 2, 0]).astype(np.uint8)
 
-
-        

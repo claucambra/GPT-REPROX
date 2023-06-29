@@ -3,7 +3,7 @@
 
 import argparse
 
-from .conversation import MineDojoMiniGPT4Conversation, CURRENT_STATE_PROMPT
+from .conversation import MineDojoMiniGPT4Conversation, build_current_task_prompt
 
 from ..MiniGPT4.minigpt4.common.config import Config
 from ..MiniGPT4.minigpt4.common.registry import registry
@@ -26,10 +26,13 @@ class MineDojoMiniGPT4:
         self.__gpt_conversation = MineDojoMiniGPT4Conversation()
 
 
-    def current_reward(self) -> int:
-        self.__gpt.ask(CURRENT_STATE_PROMPT)
+    def current_reward(self, task: str) -> int:
+        prompt = build_current_task_prompt(task)
+        self.__gpt.ask(prompt)
+
         text_reply, _ = self.__gpt.answer(self.__gpt_conversation, self.__gpt_conversation.images)
         assert isinstance(text_reply, str)
+        
         return int(text_reply)
 
 
