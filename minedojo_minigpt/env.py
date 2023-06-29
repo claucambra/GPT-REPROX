@@ -95,6 +95,29 @@ class MineDojoMiniGPT4Env:
         return obs, info
 
 
+    def step(self, act: dict):
+        obs, _, done, info = self.base_env.step(act)
+
+        rgb_image = self.obs_rgb_transpose(obs)
+        self.__minigpt.upload_img(rgb_image)
+
+        # Reward established as proximity to goal completion, 0 - 100
+        reward = self.__minigpt.current_reward(obs)
+        assert reward >= 0 and reward <= 100
+
+        self.__cur_step += 1
+
+        done = done or \
+            obs["life_stats"]["life"] == 0 or \
+                self.__cur_step >= self.max_step or \
+                    reward == 100
+
+        if self.save_rgb:
+            self.rgb_list.append(rgb_image)
+
+        return obs, reward, done, info
+    
+    
     @staticmethod
     def obs_rgb_transpose(obs: dict) -> np.ndarray:
         """
