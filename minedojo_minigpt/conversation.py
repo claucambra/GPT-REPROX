@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Claudio Cambra <developer@claudiocambra.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from ..minigpt_utils import ConversationWithImages
+from ..utils.conversation_images import ConversationWithImages
 
 
 MINEDOJO_TASKPROMPT = "Give the following image: <Img>ImageContent</Img>. " \
