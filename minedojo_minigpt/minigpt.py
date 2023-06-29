@@ -9,6 +9,7 @@ from MiniGPT4.minigpt4.common.config import Config
 from MiniGPT4.minigpt4.common.registry import registry
 from MiniGPT4.minigpt4.conversation.conversation import Chat
 from MiniGPT4.minigpt4.models.mini_gpt4 import MiniGPT4
+from MiniGPT4.minigpt4.processors import Blip2ImageEvalProcessor
 
 class MineDojoMiniGPT4:
     def __init__(self, args: argparse.Namespace):
@@ -21,7 +22,7 @@ class MineDojoMiniGPT4:
         model = MiniGPT4.from_config(model_config).to('cuda:{}'.format(args.gpu_id))
 
         vis_processor_cfg = cfg.datasets_cfg.cc_sbu_align.vis_processor.train
-        vis_processor = registry.get_processor_class(vis_processor_cfg.name).from_config(vis_processor_cfg)
+        vis_processor = Blip2ImageEvalProcessor.from_config(vis_processor_cfg)
         
         self.__gpt = Chat(model, vis_processor, device='cuda:{}'.format(args.gpu_id))
         self.__gpt_conversation = MineDojoMiniGPT4Conversation()
