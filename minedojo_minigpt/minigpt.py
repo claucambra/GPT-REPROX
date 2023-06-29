@@ -31,3 +31,7 @@ class MineDojoMiniGPT4:
         text_reply, _ = self.__gpt.answer(self.__gpt_conversation, self.__gpt_conversation.images)
         assert isinstance(text_reply, str)
         return int(text_reply)
+
+
+    def upload_img(self, rgb_image):
+        self.__gpt.upload_img(rgb_image, self.__gpt_conversation, self.__gpt_conversation.images)
