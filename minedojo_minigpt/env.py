@@ -11,8 +11,8 @@ from typing import Any, Optional
 from gymnasium import Env
 from gymnasium.envs.registration import EnvSpec
 
-from utils.gym_compat import convert_gym_space_dict, convert_gym_space_box, convert_gym_space_multidiscrete
 from .minigpt import MineDojoMiniGPT4
+from .gym_compat import convert_minedojo_space
 
 
 MIN_REWARD = 0
@@ -66,12 +66,12 @@ class MineDojoMiniGPT4Env(Env):
         # Compliance with gymnasium.Env, conversions from MineDojo's gym.Env
         gym_obs_space = self.base_env.observation_space
         if img_only_obs:
-            gymnasium_obs_space = convert_gym_space_box(self.base_env.observation_space["rgb"])
+            gymnasium_obs_space = convert_minedojo_space(self.base_env.observation_space["rgb"])
         else:
-            gymnasium_obs_space = convert_gym_space_dict(gym_obs_space)
+            gymnasium_obs_space = convert_minedojo_space(gym_obs_space)
 
         self.observation_space = gymnasium_obs_space
-        self.action_space = convert_gym_space_multidiscrete(self.base_env.action_space)
+        self.action_space = convert_minedojo_space(self.base_env.action_space)
         self.reward_range = (MIN_REWARD, MAX_REWARD)
         self.np_random = self.base_env.unwrapped._rng
         self.spec = EnvSpec("minedojo-minigpt-v0",
