@@ -16,5 +16,5 @@ def convert_minedojo_space_text(old_minedojo_text: minedojo_spaces.Text) -> spac
 
 
 # Converts a minedojo space to a gymnasium space, accounting for the Text space.
-def convert_minedojo_space(old_minedojo_space: minedojo_spaces.Space) -> spaces.Space:
+def convert_minedojo_space(old_minedojo_space: minedojo_spaces.MineRLSpace) -> spaces.Space:
     return convert_gym_space_with_fallback_callback(old_minedojo_space, convert_minedojo_space_text)
