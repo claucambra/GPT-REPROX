@@ -17,7 +17,7 @@ from .gym_compat import convert_minedojo_space
 
 MIN_REWARD = 0
 MAX_REWARD = 100
-
+ACTION_USE_IDX = 5
 
 class MineDojoMiniGPT4Env(Env):
     def __init__(self,
@@ -33,6 +33,7 @@ class MineDojoMiniGPT4Env(Env):
                  max_steps: int = 3000,
                  render_mode: Optional[str] = "human",
                  img_only_obs: bool = False,
+                 guard_actions: bool = True,
                  **kwargs):
 
         # Essential arguments to create base env
@@ -52,8 +53,10 @@ class MineDojoMiniGPT4Env(Env):
 
         self.max_steps = max_steps
         self.img_only_obs = img_only_obs
+        self.guard_actions = guard_actions
 
         self.__cur_step = 0
+        self.__latest_obs = {}
         self.__first_reset = True
         self.__reset_cmds = ["/kill @e[type=!player]", "/clear", "/kill @e[type=item]"]
 
@@ -139,6 +142,8 @@ class MineDojoMiniGPT4Env(Env):
             no_op_act = self.base_env.action_space.no_op()
             obs, _, _, info = self.base_env.step(no_op_act)
 
+        self.__latest_obs = obs
+
         rgb_image = self.obs_rgb_transpose(obs)
         self.__minigpt.upload_rgb_array(rgb_image)
 
@@ -149,7 +154,13 @@ class MineDojoMiniGPT4Env(Env):
 
 
     def step(self, act: dict) -> tuple[dict, float, bool, bool, dict]:
+        if self.guard_actions:
+            equip_list = self.__latest_obs["equipment"]
+            allow_use = True if len(equip_list) > 0 else False
+            act[ACTION_USE_IDX] = 1 if allow_use and act[ACTION_USE_IDX] == 1 else 0
+
         obs, _, done, info = self.base_env.step(act)
+        self.__latest_obs = obs
         rgb_image = self.obs_rgb_transpose(obs)
 
         self.__minigpt.upload_rgb_array(rgb_image)
