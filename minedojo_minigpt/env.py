@@ -126,7 +126,7 @@ class MineDojoMiniGPT4Env(Env):
                 self.base_env.unwrapped.execute_cmd(cmd)
         self.__first_reset = False
 
-        self.base_env.reset(move_flag=True, **options)  # reset after random teleport
+        self.base_env.reset()  # reset after random teleport
         self.base_env.unwrapped.set_time(6000)
         self.base_env.unwrapped.set_weather("clear")
 
