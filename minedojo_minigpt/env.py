@@ -11,7 +11,7 @@ from typing import Any, Optional
 from gymnasium import Env
 from gymnasium.envs.registration import EnvSpec
 
-from utils.old_gym import convert_gym_space_dict, convert_gym_space_box, convert_gym_space_multidiscrete
+from utils.gym_compat import convert_gym_space_dict, convert_gym_space_box, convert_gym_space_multidiscrete
 from .minigpt import MineDojoMiniGPT4
 
 
