@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import argparse
+import numpy as np
+
+from PIL import Image
 
 from .conversation import MineDojoMiniGPT4Conversation, build_current_task_prompt
 
@@ -38,5 +41,12 @@ class MineDojoMiniGPT4:
         return int(text_reply)
 
 
-    def upload_img(self, rgb_image):
+    def upload_img(self, rgb_image: Image.Image):
         self.__gpt.upload_img(rgb_image, self.__gpt_conversation, self.__gpt_conversation.images)
+
+
+    def upload_rgb_array(self, rgb_image_array: np.ndarray):
+        # We want the vision processor to do its thing. For this, we need to pass the rgb_array as
+        # a proper image, so that it is processed by the vision processor used by MiniGPT
+        image = Image.fromarray(rgb_image_array)
+        self.upload_img(image)

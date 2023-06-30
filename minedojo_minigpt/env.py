@@ -136,7 +136,7 @@ class MineDojoMiniGPT4Env(Env):
             obs, _, _, info = self.base_env.step(no_op_act)
 
         rgb_image = self.obs_rgb_transpose(obs)
-        self.__minigpt.upload_img(rgb_image)
+        self.__minigpt.upload_rgb_array(rgb_image)
 
         if self.save_rgb:
             self.rgb_list = [rgb_image]
@@ -151,7 +151,7 @@ class MineDojoMiniGPT4Env(Env):
             obs = obs["rgb"]
 
         rgb_image = self.obs_rgb_transpose(obs)
-        self.__minigpt.upload_img(rgb_image)
+        self.__minigpt.upload_rgb_array(rgb_image)
 
         # Reward established as proximity to goal completion, 0 - 100
         reward = self.__minigpt.current_reward(self.__task_string)
