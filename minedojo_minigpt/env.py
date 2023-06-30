@@ -114,6 +114,10 @@ class MineDojoMiniGPT4Env(Env):
             self.base_env.close()
 
 
+    def output_obs(self, obs: dict) -> dict:
+        return obs["rgb"] if self.img_only_obs else obs
+
+
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None) -> tuple[dict, dict]:
         if seed is not None:
             self.seed = seed
@@ -141,16 +145,13 @@ class MineDojoMiniGPT4Env(Env):
         if self.save_rgb:
             self.rgb_list = [rgb_image]
 
-        return obs, info
+        return self.output_obs(obs), info
 
 
     def step(self, act: dict) -> tuple[dict, float, bool, bool, dict]:
         obs, _, done, info = self.base_env.step(act)
-
-        if self.img_only_obs:
-            obs = obs["rgb"]
-
         rgb_image = self.obs_rgb_transpose(obs)
+
         self.__minigpt.upload_rgb_array(rgb_image)
 
         # Reward established as proximity to goal completion, 0 - 100
@@ -168,7 +169,7 @@ class MineDojoMiniGPT4Env(Env):
         if self.save_rgb:
             self.rgb_list.append(rgb_image)
 
-        return obs, reward, terminated, truncated, info
+        return self.output_obs(obs), reward, terminated, truncated, info
     
 
     def render(self):
