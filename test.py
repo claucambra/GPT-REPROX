@@ -42,5 +42,5 @@ if __name__ == "__main__":
     device = set_device()
     set_seed(args.seed)
 
-    env = setup_minedojo_gpt_env(args, device)
+    env = setup_minedojo_gpt_env(args, device, img_only=True)
     run_minedojo_test(args, env)

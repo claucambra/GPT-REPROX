@@ -9,7 +9,10 @@ from minedojo_minigpt.env import MineDojoMiniGPT4Env
 from .task_config import setup_task_conf
 
 
-def setup_minedojo_gpt_env(args: argparse.Namespace, device: torch.device) -> MineDojoMiniGPT4Env:
+def setup_minedojo_gpt_env(args: argparse.Namespace,
+                           device: torch.device,
+                           img_only: bool = False) -> MineDojoMiniGPT4Env:
+
     save_dir = os.path.join(args.save_results_dir, args.task)
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -21,4 +24,5 @@ def setup_minedojo_gpt_env(args: argparse.Namespace, device: torch.device) -> Mi
         seed=args.seed,
         device=device,
         save_rgb=False,
+        img_only_obs=img_only,
         **task_conf)
