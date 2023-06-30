@@ -12,7 +12,7 @@ from utils.setup import set_device, set_seed
 
 
 def run_minedojo_test(args: argparse.Namespace, env: MineDojoMiniGPT4Env):
-    ppo_agent = PPO("LnMlpPolicy", 
+    ppo_agent = PPO("MlpPolicy", 
                     env, 
                     device=env.device, 
                     seed=env.seed, 
