@@ -50,7 +50,7 @@ class MineDojoMiniGPT4Env(Env):
         self.render_mode = render_mode
         self.save_rgb = save_rgb
 
-        self.max_step = max_steps
+        self.max_steps = max_steps
         self.img_only_obs = img_only_obs
 
         self.__cur_step = 0
@@ -163,7 +163,7 @@ class MineDojoMiniGPT4Env(Env):
             obs["life_stats"]["life"] == 0 or \
                 reward == MAX_REWARD
         
-        truncated = self.__cur_step >= self.max_step
+        truncated = self.__cur_step >= self.max_steps
 
         if self.save_rgb:
             self.rgb_list.append(rgb_image)
