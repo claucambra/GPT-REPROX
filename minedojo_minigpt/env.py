@@ -9,6 +9,7 @@ import argparse
 from typing import Any, Optional
 from gymnasium import Env
 from gymnasium.envs.registration import EnvSpec
+from gymnasium import spaces
 
 from .minigpt import MineDojoMiniGPT4
 
@@ -59,9 +60,12 @@ class MineDojoMiniGPT4Env(Env):
 
         self.__remake_env()
 
-        # Compliance with gymnasium.Env
-        self.observation_space = self.base_env.observation_space
-        self.action_space = self.base_env.action_space
+        # Compliance with gymnasium.Env, conversions from MineDojo's gym.Env
+        gym_obs_space = self.base_env.observation_space
+        gym_dict = {k:v for k, v in gym_obs_space.items()}
+
+        self.observation_space = spaces.Dict(gym_dict, seed=self.seed)
+        self.action_space = spaces.Discrete(self.base_env.action_space.n)
         self.reward_range = (MIN_REWARD, MAX_REWARD)
         self.np_random = self.base_env.unwrapped._rng
         self.spec = EnvSpec("minedojo-minigpt-v0",
