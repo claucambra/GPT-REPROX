@@ -8,6 +8,7 @@ import argparse
 
 from typing import Any, Optional
 from gymnasium import Env
+from gymnasium.envs.registration import EnvSpec
 
 from .minigpt import MineDojoMiniGPT4
 
@@ -63,8 +64,13 @@ class MineDojoMiniGPT4Env(Env):
         self.action_space = self.base_env.action_space
         self.reward_range = (MIN_REWARD, MAX_REWARD)
         self.np_random = self.base_env.unwrapped._rng
-        self.spec = self.base_env.spec
-        self.spec.sim_name = self.spec.sim_name + "_minigpt"
+        self.spec = EnvSpec("minedojo-minigpt-v0",
+                            entry_point="minedojo_minigpt.env:MineDojoMiniGPT4Env",
+                            reward_threshold=MAX_REWARD,
+                            nondeterministic=False,
+                            max_episode_steps=max_steps,
+                            order_enforce=True,
+                            autoreset=False)
 
 
     def __del__(self):
