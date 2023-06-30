@@ -7,6 +7,7 @@ import torch
 import argparse
 
 from typing import Any, Optional
+from gym import spaces as old_spaces
 from gymnasium import Env
 from gymnasium.envs.registration import EnvSpec
 from gymnasium import spaces
@@ -62,9 +63,34 @@ class MineDojoMiniGPT4Env(Env):
 
         # Compliance with gymnasium.Env, conversions from MineDojo's gym.Env
         gym_obs_space = self.base_env.observation_space
-        gym_dict = {k:v for k, v in gym_obs_space.items()}
 
-        self.observation_space = spaces.Dict(gym_dict, seed=self.seed)
+        def convert_gym_space_dict(old_gym_dict: old_spaces.Dict) -> dict:
+            normal_dict = spaces.Dict()
+            for key, value in old_gym_dict.items():
+                if isinstance(value, old_spaces.Dict):
+                    normal_dict[key] = convert_gym_space_dict(value)
+                elif isinstance(value, old_spaces.Box):
+                    normal_dict[key] = spaces.Box(low=value.low,
+                                                  high=value.high,
+                                                  shape=value.shape,
+                                                  dtype=value.dtype)
+                elif isinstance(value, minedojo.sim.spaces.Text):
+                    val_length = value.shape[0]
+                    normal_dict[key] = spaces.Text(min_length=val_length, 
+                                                   max_length=val_length)
+                elif isinstance(value, old_spaces.Discrete):
+                    normal_dict[key] = spaces.Discrete(value.n)
+                elif isinstance(value, old_spaces.MultiDiscrete):
+                    normal_dict[key] = spaces.MultiDiscrete(value.nvec,
+                                                            dtype=value.dtype)
+                else:
+                    normal_dict[key] = value
+
+            return normal_dict
+
+        gymnasium_obs_space = convert_gym_space_dict(gym_obs_space)
+
+        self.observation_space = gymnasium_obs_space
         self.action_space = spaces.Discrete(self.base_env.action_space.n)
         self.reward_range = (MIN_REWARD, MAX_REWARD)
         self.np_random = self.base_env.unwrapped._rng
