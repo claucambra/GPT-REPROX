@@ -64,6 +64,10 @@ class MineDojoMiniGPT4Env(Env):
         # Compliance with gymnasium.Env, conversions from MineDojo's gym.Env
         gym_obs_space = self.base_env.observation_space
 
+        def convert_gym_space_multidiscrete(old_gym_multidescrete: old_spaces.MultiDiscrete) -> spaces.MultiDiscrete:
+            return spaces.MultiDiscrete(old_gym_multidescrete.nvec,
+                                        dtype=old_gym_multidescrete.dtype)
+
         def convert_gym_space_dict(old_gym_dict: old_spaces.Dict) -> dict:
             normal_dict = spaces.Dict()
             for key, value in old_gym_dict.items():
@@ -81,8 +85,7 @@ class MineDojoMiniGPT4Env(Env):
                 elif isinstance(value, old_spaces.Discrete):
                     normal_dict[key] = spaces.Discrete(value.n)
                 elif isinstance(value, old_spaces.MultiDiscrete):
-                    normal_dict[key] = spaces.MultiDiscrete(value.nvec,
-                                                            dtype=value.dtype)
+                    normal_dict[key] = convert_gym_space_multidiscrete(value)
                 else:
                     normal_dict[key] = value
 
@@ -91,7 +94,7 @@ class MineDojoMiniGPT4Env(Env):
         gymnasium_obs_space = convert_gym_space_dict(gym_obs_space)
 
         self.observation_space = gymnasium_obs_space
-        self.action_space = spaces.Discrete(self.base_env.action_space.n)
+        self.action_space = convert_gym_space_multidiscrete(self.base_env.action_space)
         self.reward_range = (MIN_REWARD, MAX_REWARD)
         self.np_random = self.base_env.unwrapped._rng
         self.spec = EnvSpec("minedojo-minigpt-v0",
