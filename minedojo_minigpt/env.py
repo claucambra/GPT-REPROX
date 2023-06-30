@@ -32,6 +32,7 @@ class MineDojoMiniGPT4Env(Env):
                  save_rgb: bool = False,
                  max_steps: int = 3000,
                  render_mode: Optional[str] = "human",
+                 img_only_obs: bool = False,
                  **kwargs):
 
         # Essential arguments to create base env
@@ -50,6 +51,7 @@ class MineDojoMiniGPT4Env(Env):
         self.save_rgb = save_rgb
 
         self.max_step = max_steps
+        self.img_only_obs = img_only_obs
 
         self.__cur_step = 0
         self.__first_reset = True
@@ -62,11 +64,16 @@ class MineDojoMiniGPT4Env(Env):
         self.__remake_env()
 
         # Compliance with gymnasium.Env, conversions from MineDojo's gym.Env
-        gym_obs_space = self.base_env.observation_space
 
         def convert_gym_space_multidiscrete(old_gym_multidescrete: old_spaces.MultiDiscrete) -> spaces.MultiDiscrete:
             return spaces.MultiDiscrete(old_gym_multidescrete.nvec,
                                         dtype=old_gym_multidescrete.dtype)
+
+        def convert_gym_space_box(old_gym_box: old_spaces.Box) -> spaces.Box:
+            return spaces.Box(low=old_gym_box.low,
+                              high=old_gym_box.high,
+                              shape=old_gym_box.shape,
+                              dtype=old_gym_box.dtype)
 
         def convert_gym_space_dict(old_gym_dict: old_spaces.Dict) -> dict:
             normal_dict = spaces.Dict()
@@ -74,10 +81,7 @@ class MineDojoMiniGPT4Env(Env):
                 if isinstance(value, old_spaces.Dict):
                     normal_dict[key] = convert_gym_space_dict(value)
                 elif isinstance(value, old_spaces.Box):
-                    normal_dict[key] = spaces.Box(low=value.low,
-                                                  high=value.high,
-                                                  shape=value.shape,
-                                                  dtype=value.dtype)
+                    normal_dict[key] = convert_gym_space_box(value)
                 elif isinstance(value, minedojo.sim.spaces.Text):
                     val_length = value.shape[0]
                     normal_dict[key] = spaces.Text(min_length=val_length, 
@@ -91,7 +95,12 @@ class MineDojoMiniGPT4Env(Env):
 
             return normal_dict
 
-        gymnasium_obs_space = convert_gym_space_dict(gym_obs_space)
+        gym_obs_space = self.base_env.observation_space
+        gymnasium_obs_space: spaces.Space
+        if img_only_obs:
+            gymnasium_obs_space = convert_gym_space_box(self.base_env.observation_space["rgb"])
+        else:
+            gymnasium_obs_space = convert_gym_space_dict(gym_obs_space)
 
         self.observation_space = gymnasium_obs_space
         self.action_space = convert_gym_space_multidiscrete(self.base_env.action_space)
@@ -169,6 +178,9 @@ class MineDojoMiniGPT4Env(Env):
 
     def step(self, act: dict) -> tuple[dict, float, bool, bool, dict]:
         obs, _, done, info = self.base_env.step(act)
+
+        if self.img_only_obs:
+            obs = obs["rgb"]
 
         rgb_image = self.obs_rgb_transpose(obs)
         self.__minigpt.upload_img(rgb_image)
