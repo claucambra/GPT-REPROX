@@ -19,20 +19,26 @@ def convert_gym_space_box(old_gym_box: old_spaces.Box) -> spaces.Box:
 
 def convert_gym_space_dict(old_gym_dict: old_spaces.Dict) -> dict:
     normal_dict = spaces.Dict()
+
     for key, value in old_gym_dict.items():
-        if isinstance(value, old_spaces.Dict):
-            normal_dict[key] = convert_gym_space_dict(value)
-        elif isinstance(value, old_spaces.Box):
-            normal_dict[key] = convert_gym_space_box(value)
-        elif isinstance(value, old_spaces.Text):
-            val_length = value.shape[0]
-            normal_dict[key] = spaces.Text(min_length=val_length, 
-                                            max_length=val_length)
-        elif isinstance(value, old_spaces.Discrete):
-            normal_dict[key] = spaces.Discrete(value.n)
-        elif isinstance(value, old_spaces.MultiDiscrete):
-            normal_dict[key] = convert_gym_space_multidiscrete(value)
-        else:
-            normal_dict[key] = value
+        # Will recursively call to convert sub-dicts
+        normal_dict[key] = convert_gym_space(value)
 
     return normal_dict
+
+
+def convert_gym_space(old_gym_space: old_spaces.Space) -> spaces.Space:
+    if isinstance(old_gym_space, old_spaces.Dict):
+        return convert_gym_space_dict(old_gym_space)
+    elif isinstance(old_gym_space, old_spaces.Box):
+        return convert_gym_space_box(old_gym_space)
+    elif isinstance(old_gym_space, old_spaces.Text):
+        val_length = old_gym_space.shape[0]
+        return spaces.Text(min_length=val_length, max_length=val_length)
+    elif isinstance(old_gym_space, old_spaces.Discrete):
+        return spaces.Discrete(old_gym_space.n)
+    elif isinstance(old_gym_space, old_spaces.MultiDiscrete):
+        return convert_gym_space_multidiscrete(old_gym_space)
+    else:
+        print("Unknown space type: ", type(old_gym_space))
+        return old_gym_space
