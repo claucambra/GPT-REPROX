@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2023 Claudio Cambra <developer@claudiocambra.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import Any, Callable
+
 from gym import spaces as old_spaces
 from gymnasium import spaces
 
@@ -37,7 +39,8 @@ def convert_gym_space_dict(old_gym_dict: old_spaces.Dict) -> dict:
     return normal_dict
 
 
-def convert_gym_space(old_gym_space: old_spaces.Space) -> spaces.Space:
+def convert_gym_space_with_fallback_callback(old_gym_space: old_spaces.Space, 
+                                             callback: Callable[[Any], spaces.Space]) -> spaces.Space:
     if isinstance(old_gym_space, old_spaces.Dict):
         return convert_gym_space_dict(old_gym_space)
     elif isinstance(old_gym_space, old_spaces.Box):
@@ -48,6 +51,13 @@ def convert_gym_space(old_gym_space: old_spaces.Space) -> spaces.Space:
         return convert_gym_space_discrete(old_gym_space)
     elif isinstance(old_gym_space, old_spaces.MultiDiscrete):
         return convert_gym_space_multidiscrete(old_gym_space)
-    else:
-        print("Unknown space type: ", type(old_gym_space))
-        return old_gym_space
+    else:  # Don't know, so invoke the callback
+        return callback(old_gym_space)
+
+
+def convert_gym_space(old_gym_space: old_spaces.Space) -> spaces.Space:
+    def fallback_callback(space: Any) -> spaces.Space:
+        print("Unknown space type: ", type(space))
+        return space
+
+    return convert_gym_space_with_fallback_callback(old_gym_space, fallback_callback)
