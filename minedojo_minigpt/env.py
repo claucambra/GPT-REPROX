@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import argparse
 
+from copy import deepcopy
 from typing import Any, Optional
 
 from gymnasium import Env, spaces
@@ -108,15 +109,15 @@ class MineDojoMiniGPT4Env(Env):
 
         print("Environment remake: reset all the destroyed blocks!")
 
-    def __guarded_action(self, action: tuple[int]) -> tuple[int]:
+    def __guarded_action(self, action: np.ndarray) -> np.ndarray:
         if not self.guard_actions:
             return action
 
-        action_list = list(action)
+        action_copy = deepcopy(action)
         equip_list = self.__latest_obs["equipment"]
         allow_use = True if len(equip_list) > 0 else False
-        action_list[ACTION_USE_IDX] = 1 if allow_use and action[ACTION_USE_IDX] == 1 else 0
-        return tuple(action_list)
+        action_copy[ACTION_USE_IDX] = 1 if allow_use and action[ACTION_USE_IDX] == 1 else 0
+        return action_copy
 
     # Duck typing methods for gymnasium.Env
     def close(self):
@@ -157,7 +158,7 @@ class MineDojoMiniGPT4Env(Env):
 
         return self.output_obs(obs), info
 
-    def step(self, act: tuple[int]) -> tuple[dict, float, bool, bool, dict]:
+    def step(self, act: np.ndarray) -> tuple[dict, float, bool, bool, dict]:
         act = self.__guarded_action(act)
 
         obs, _, done, info = self.base_env.step(act)
