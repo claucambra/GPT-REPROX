@@ -43,7 +43,7 @@ def build_current_task_prompt(task: str) -> str:
 class MineDojoMiniGPT4Conversation(ConversationWithImages):
     def __init__(self, 
                  system: str = MINEDOJO_TASKPROMPT,
-                 roles: list[str] = ("Human", "Assistant"),
+                 roles: list[str] = ["Human", "Assistant"],
                  messages: list[list[str]] = [],
                  offset: int = 2):
         
