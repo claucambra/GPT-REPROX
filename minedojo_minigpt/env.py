@@ -8,12 +8,11 @@ import argparse
 
 from typing import Any, Optional
 
-from gymnasium import Env
+from gymnasium import Env, spaces
 from gymnasium.envs.registration import EnvSpec
 
 from .minigpt import MineDojoMiniGPT4
 from .gym_compat import convert_minedojo_space
-
 
 MIN_REWARD = 0
 MAX_REWARD = 100
@@ -109,17 +108,23 @@ class MineDojoMiniGPT4Env(Env):
 
         print("Environment remake: reset all the destroyed blocks!")
 
+    def __guarded_action(self, action: tuple[int]) -> tuple[int]:
+        if not self.guard_actions:
+            return action
+
+        action_list = list(action)
+        equip_list = self.__latest_obs["equipment"]
+        allow_use = True if len(equip_list) > 0 else False
+        action_list[ACTION_USE_IDX] = 1 if allow_use and action[ACTION_USE_IDX] == 1 else 0
+        return tuple(action_list)
 
     # Duck typing methods for gymnasium.Env
-
     def close(self):
         if hasattr(self, "base_env"):
             self.base_env.close()
 
-
     def output_obs(self, obs: dict) -> dict:
         return obs["rgb"] if self.img_only_obs else obs
-
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict[str, Any]] = None) -> tuple[dict, dict]:
         if seed is not None:
@@ -152,12 +157,8 @@ class MineDojoMiniGPT4Env(Env):
 
         return self.output_obs(obs), info
 
-
-    def step(self, act: dict) -> tuple[dict, float, bool, bool, dict]:
-        if self.guard_actions:
-            equip_list = self.__latest_obs["equipment"]
-            allow_use = True if len(equip_list) > 0 else False
-            act[ACTION_USE_IDX] = 1 if allow_use and act[ACTION_USE_IDX] == 1 else 0
+    def step(self, act: tuple[int]) -> tuple[dict, float, bool, bool, dict]:
+        act = self.__guarded_action(act)
 
         obs, _, done, info = self.base_env.step(act)
         self.__latest_obs = obs
@@ -171,10 +172,7 @@ class MineDojoMiniGPT4Env(Env):
 
         self.__cur_step += 1
 
-        terminated = done or \
-            obs["life_stats"]["life"] == 0 or \
-                reward == MAX_REWARD
-        
+        terminated = done or obs["life_stats"]["life"] == 0 or reward == MAX_REWARD
         truncated = self.__cur_step >= self.max_steps
 
         if self.save_rgb:
@@ -182,11 +180,9 @@ class MineDojoMiniGPT4Env(Env):
 
         return self.output_obs(obs), reward, terminated, truncated, info
     
-
     def render(self):
         self.base_env.render(self.render_mode)
 
-    
     @staticmethod
     def obs_rgb_transpose(obs: dict) -> np.ndarray:
         """
