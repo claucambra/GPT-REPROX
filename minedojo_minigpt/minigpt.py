@@ -61,7 +61,7 @@ class MineDojoMiniGPT4:
         convo_copy = self.__gpt_conversation.copy()
         self.__gpt.ask(prompt, convo_copy)
 
-        text_reply, _ = self.__gpt.answer(convo_copy, convo_copy.images)
+        text_reply, _ = self.__gpt.answer(convo_copy, convo_copy.images, max_length=20000)
         assert isinstance(text_reply, str)
         
         return self.__parse_answer_for_reward(text_reply)
