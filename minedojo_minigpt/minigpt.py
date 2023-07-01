@@ -66,8 +66,13 @@ class MineDojoMiniGPT4:
         
         return self.__parse_answer_for_reward(text_reply)
 
+    # A slightly simplified and reworked version of upload_img from MiniGPT4.
+    # It has modifications to work better with the ConversationWithImages class.
     def upload_img(self, rgb_image: Image.Image):
-        self.__gpt.upload_img(rgb_image, self.__gpt_conversation, self.__gpt_conversation.images)
+        image = self.__gpt.vis_processor(rgb_image).unsqueeze(0).to(self.__gpt.device)
+        image_emb, _ = self.__gpt.model.encode_img(image)
+
+        self.__gpt_conversation.add_image(image_emb)
 
     def upload_rgb_array(self, rgb_image_array: np.ndarray):
         # We want the vision processor to do its thing. For this, we need to pass the rgb_array as
