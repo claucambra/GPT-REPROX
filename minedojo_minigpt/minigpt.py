@@ -30,6 +30,25 @@ class MineDojoMiniGPT4:
         self.__gpt = Chat(model, vis_processor, device='cuda:{}'.format(args.gpu_id))
         self.__gpt_conversation = MineDojoMiniGPT4Conversation()
 
+    # Unfortunately we can't always trust the model to return an integer-only answer.
+    # If it returns a number-only answer, great -- just use that. If not, we need to
+    # parse the text answer and extract the reward from it.
+    def __parse_answer_for_reward(self, answer: str) -> int:
+        try:
+            return int(answer)
+        except ValueError:
+            numbers = [int(i) for i in answer.split() if i.isdigit()]
+
+            if len(numbers) == 0:
+                print("WARNING: Received no numbers in MiniGPT answer. "
+                      "Full answer was: {}. Returning 0 as reward.".format(answer))
+                return 0
+            elif len(numbers) == 1:
+                return numbers[0]
+            else:
+                print("WARNING: Received multiple numbers in MiniGPT answer. "
+                      "Full answer was: {}. Returning last number as reward.".format(answer))
+                return numbers[-1]
 
     def current_reward(self, task: str) -> int:
         prompt = build_current_task_prompt(task)
@@ -38,12 +57,10 @@ class MineDojoMiniGPT4:
         text_reply, _ = self.__gpt.answer(self.__gpt_conversation, self.__gpt_conversation.images)
         assert isinstance(text_reply, str)
         
-        return int(text_reply)
-
+        return self.__parse_answer_for_reward(text_reply)
 
     def upload_img(self, rgb_image: Image.Image):
         self.__gpt.upload_img(rgb_image, self.__gpt_conversation, self.__gpt_conversation.images)
-
 
     def upload_rgb_array(self, rgb_image_array: np.ndarray):
         # We want the vision processor to do its thing. For this, we need to pass the rgb_array as
