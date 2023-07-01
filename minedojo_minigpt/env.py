@@ -56,7 +56,6 @@ class MineDojoMiniGPT4Env(Env):
         self.guard_actions = guard_actions
 
         self.__cur_step = 0
-        self.__latest_obs = {}
         self.__first_reset = True
         self.__reset_cmds = ["/kill @e[type=!player]", "/clear", "/kill @e[type=item]"]
 
@@ -114,7 +113,8 @@ class MineDojoMiniGPT4Env(Env):
             return action
 
         action_copy = deepcopy(action)
-        equip_list = self.__latest_obs["equipment"]
+        obs = self.base_env.unwrapped._prev_obs
+        equip_list = obs["equipment"]
         allow_use = True if len(equip_list) > 0 else False
         action_copy[ACTION_USE_IDX] = 1 if allow_use and action[ACTION_USE_IDX] == 1 else 0
         return action_copy
@@ -148,8 +148,6 @@ class MineDojoMiniGPT4Env(Env):
             no_op_act = self.base_env.action_space.no_op()
             obs, _, _, info = self.base_env.step(no_op_act)
 
-        self.__latest_obs = obs
-
         rgb_image = self.obs_rgb_transpose(obs)
         self.__minigpt.upload_rgb_array(rgb_image)
 
@@ -162,7 +160,6 @@ class MineDojoMiniGPT4Env(Env):
         act = self.__guarded_action(act)
 
         obs, _, done, info = self.base_env.step(act)
-        self.__latest_obs = obs
         rgb_image = self.obs_rgb_transpose(obs)
 
         self.__minigpt.upload_rgb_array(rgb_image)
