@@ -54,9 +54,14 @@ class MineDojoMiniGPT4:
 
     def current_reward(self, task: str) -> int:
         prompt = build_current_task_prompt(task)
-        self.__gpt.ask(prompt, self.__gpt_conversation)
 
-        text_reply, _ = self.__gpt.answer(self.__gpt_conversation, self.__gpt_conversation.images)
+        # Ask is really just a convenience method to append the question/prompt to the conversation.
+        # We don't really want/need every prompt to be contained in the history, just the images.
+        # So we create a temporary copy of the conversation with the prompt applied to it.
+        convo_copy = self.__gpt_conversation.copy()
+        self.__gpt.ask(prompt, convo_copy)
+
+        text_reply, _ = self.__gpt.answer(convo_copy, convo_copy.images)
         assert isinstance(text_reply, str)
         
         return self.__parse_answer_for_reward(text_reply)
