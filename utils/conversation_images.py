@@ -11,7 +11,20 @@ REPLACEMENT_MARKER_STRING = "<TEMP_REPLACEMENT>"
 # need to be taken care of independently of the Conversation class.
 class ConversationWithImages(Conversation):
     __images: list = []
-    image_limit: int = -1
+    __image_limit: int = -1
+
+    @property
+    def images(self) -> list:
+        return self.__images
+
+    @property
+    def image_limit(self) -> int:
+        return self.__image_limit
+    
+    @image_limit.setter
+    def image_limit(self, image_limit: int) -> None:
+        self.__image_limit = image_limit
+        self.__clean_up_convo_img_limits()
 
     def __clean_up_imgs(self) -> None:
         while len(self.__images) >= self.image_limit and self.image_limit >= 0:
