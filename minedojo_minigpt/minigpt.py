@@ -37,7 +37,9 @@ class MineDojoMiniGPT4:
         try:
             return int(answer)
         except ValueError:
-            numbers = [int(i) for i in answer.split() if i.isdigit()]
+            # If MiniGPT returns a long-winded text answer, split it by its spaces and extract the
+            # numbers from it. Then return the last number found.
+            numbers = [int(i) for i in answer.split(" ") if i.isdigit()]
 
             if len(numbers) == 0:
                 print("WARNING: Received no numbers in MiniGPT answer. "
