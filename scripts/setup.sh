@@ -60,31 +60,31 @@ fi
 if type java > /dev/null; then
     info "Found a Java installation."
     java_exec=java
-elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
+elif [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ];  then
     info "Found a Java installation through JAVA_HOME env variable." 
     java_exec="$JAVA_HOME/bin/java"
 else
     info "No Java installation found."
 fi
 
-if [[ "$java_exec" ]]; then
+if [ "$java_exec" ]; then
     # Version check, with numbers together (e.g. 1.8.0 is 18)
     required_java_major_version=18
     java_major_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
-    valid_java_version=0; [[ $java_major_version -eq required_java_major_version ]] && valid_java_version=1
+    valid_java_version=0; [ "$java_major_version" -eq "$required_java_major_version" ] && valid_java_version=1
 
-    if [[ "$valid_java_version" -eq 1 ]]; then
+    if [ "$valid_java_version" -eq 1 ]; then
         info "Java version is in 1.8 range."
     else         
         info "Java version is not in 1.8 range."
     fi
 fi
 
-if ! [[ "$java_exec" ]] || [[ "$valid_java_version" -eq 0 ]]; then
+if ! [ "$java_exec" ] || [ "$valid_java_version" -eq 0 ]; then
     info "Installing Java..."
     install_java8_package
 
-    if [[ -d /usr/lib/jvm/java-8-openjdk-amd64 ]]; then
+    if [ -d /usr/lib/jvm/java-8-openjdk-amd64 ]; then
         export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
         info "Java 8 installation is now complete!"
         java_home_set=1
@@ -97,14 +97,14 @@ fi
 ## Headless execution setup
 apt install x11-utils xvfb
 
-if [[ -z "$DISPLAY" ]]; then
+if [ -z "$DISPLAY" ]; then
     info "Setting up headless execution display..."
     export DISPLAY=:99
     Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &
 fi
 
 # Clone GPT-REPROX
-if [[ -d GPT-REPROX ]]; then
+if [ -d GPT-REPROX ]; then
     info "GPT-REPROX already exists. Skipping clone..."
 else
     info "Starting fetch of GPT-REPROX..."
@@ -150,7 +150,7 @@ info "You can run the GPT-REPROX test by executing:"
 info "MINEDOJO_HEADLESS=1 python GPT-REPROX/test.py --cfg-path GPT-REPROX/MiniGPT4/eval_configs/minigpt4_eval.yaml"
 info "If you want to run the test with a GUI, you can do so by executing the prior command without MINEDOJO_HEADLESS=1"
 
-if [[ "$java_home_set" -eq 0 ]]; then
+if [ "$java_home_set" -eq 0 ]; then
     info "JAVA_HOME is not set to Java 8 JDK!"
     info "Make sure JAVA_HOME is set to Java 8 JDK path as otheriwse MineDojo is unlikely to work correctly."
 fi
