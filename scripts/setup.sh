@@ -8,11 +8,33 @@ info()
     echo "[${green}reprox-setup${normal}] $1"
 }
 
+install_package()
+{
+    if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache "$1"
+    elif [ -x "$(command -v apt-get)" ]; then sudo apt install "$1"
+    elif [ -x "$(command -v dnf)" ];     then sudo dnf install "$1"
+    elif [ -x "$(command -v zypper)" ];  then sudo zypper install "$1"
+    elif [ -x "$(command -v pacman)" ];  then sudo pacman -Syu "$1"
+    elif [ -x "$(command -v brew)" ];    then sudo brew install "$1"
+    else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install: $1">&2; fi
+}
+
+install_java8_package()
+{
+    if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache openjdk8
+    elif [ -x "$(command -v apt-get)" ]; then sudo apt install openjdk-8-jdk
+    elif [ -x "$(command -v dnf)" ];     then sudo dnf install java-1.8.0-openjdk
+    elif [ -x "$(command -v zypper)" ];  then sudo zypper in java-1_8_0-openjdk
+    elif [ -x "$(command -v pacman)" ];  then sudo pacman -Syu java8-openjdk
+    elif [ -x "$(command -v brew)" ];    then sudo brew install openjdk@8
+    else echo "FAILED TO INSTALL PACKAGE: Package manager not found. You must manually install Java 8">&2; fi
+}
+
 get_tool()
 {
     if ! type "$1" > /dev/null; then
         info "Could not find $1. Installing $1..."
-        sudo apt install $1
+        install_package "$1"
     else
         info "$1 found."
     fi
@@ -60,8 +82,16 @@ fi
 
 if ! [[ "$java_exec" ]] || [[ "$valid_java_version" -eq 0 ]]; then
     info "Installing Java..."
-    sudo apt install openjdk-8-jdk
-    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    install_java8_package
+
+    if [[ -d /usr/lib/jvm/java-8-openjdk-amd64 ]]; then
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+        info "Java 8 installation is now complete!"
+        java_home_set=1
+    else
+        info "Java 8 installation is now complete, check if JAVA_HOME is set to Java 8 JDK!"
+        java_home_set=0
+    fi
 fi
 
 ## Headless execution setup
@@ -110,7 +140,15 @@ pip install -e MineDojo/
 info "Cleaning up MineDojo directory..."
 rm -Rf MineDojo
 
+info ""
 info "Setup complete!"
 info "You can run the GPT-REPROX test by executing:"
 info "MINEDOJO_HEADLESS=1 python GPT-REPROX/test.py --cfg-path GPT-REPROX/MiniGPT4/eval_configs/minigpt4_eval.yaml"
 info "If you want to run the test with a GUI, you can do so by executing the prior command without MINEDOJO_HEADLESS=1"
+
+if [[ "$java_home_set" -eq 0 ]]; then
+    info "JAVA_HOME is not set to Java 8 JDK!"
+    info "Make sure JAVA_HOME is set to Java 8 JDK path as otheriwse MineDojo is unlikely to work correctly."
+fi
+
+info ""
