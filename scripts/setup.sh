@@ -60,6 +60,10 @@ fi
 if type java > /dev/null; then
     info "Found a Java installation."
     java_exec=java
+elif type java8 > /dev/null; then
+    info "Found a Java 8 installation."
+    java_exec=java8
+    valid_java_version=1
 elif [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ];  then
     info "Found a Java installation through JAVA_HOME env variable." 
     java_exec="$JAVA_HOME/bin/java"
@@ -67,8 +71,8 @@ else
     info "No Java installation found."
 fi
 
-if [ "$java_exec" ]; then
-    required_java_major_version=52 # 55 is Java 8
+if [ "$java_exec" ] && ! "$valid_java_version" -eq 1; then
+    required_java_major_version=52 # 52 is Java 8
     java_major_version=$(javap -verbose java.lang.String | grep "major version" | cut -d " " -f5)
 
     if [ "$java_major_version" -eq "$required_java_major_version" ]; then
@@ -83,15 +87,15 @@ fi
 if ! [ "$java_exec" ] || [ "$valid_java_version" -eq 0 ]; then
     info "Installing Java..."
     install_java8_package
+fi
 
-    if [ -d /usr/lib/jvm/java-8-openjdk-amd64 ]; then
-        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-        info "Java 8 installation is now complete!"
-        java_home_set=1
-    else
-        info "Java 8 installation is now complete, check if JAVA_HOME is set to Java 8 JDK!"
-        java_home_set=0
-    fi
+if [ -d /usr/lib/jvm/java-8-openjdk-amd64 ]; then
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    info "Java 8 installation is now complete!"
+    java_home_set=1
+else
+    info "Java 8 installation is now complete, check if JAVA_HOME is set to Java 8 JDK!"
+    java_home_set=0
 fi
 
 ## Headless execution setup
