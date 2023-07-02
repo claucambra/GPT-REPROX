@@ -61,7 +61,7 @@ if type java > /dev/null; then
     info "Found a Java installation."
     java_exec=java
 elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
-    info "Found a Java insallation through JAVA_HOME env variable." 
+    info "Found a Java installation through JAVA_HOME env variable." 
     java_exec="$JAVA_HOME/bin/java"
 else
     info "No Java installation found."
@@ -104,8 +104,12 @@ if [[ -z "$DISPLAY" ]]; then
 fi
 
 # Clone GPT-REPROX
-info "Starting fetch of GPT-REPROX..."
-git clone --recurse-submodules --progress --verbose https://github.com/claucambra/GPT-REPROX.git
+if [[ -d GPT-REPROX ]]; then
+    info "GPT-REPROX already exists. Skipping clone..."
+else
+    info "Starting fetch of GPT-REPROX..."
+    git clone --recurse-submodules --progress --verbose https://github.com/claucambra/GPT-REPROX.git
+fi
 
 expected_env_name="minigpt4"
 
