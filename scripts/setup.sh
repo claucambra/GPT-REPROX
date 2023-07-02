@@ -71,12 +71,13 @@ if [ "$java_exec" ]; then
     # Version check, with numbers together (e.g. 1.8.0 is 18)
     required_java_major_version=18
     java_major_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
-    valid_java_version=0; [ "$java_major_version" -eq "$required_java_major_version" ] && valid_java_version=1
 
-    if [ "$valid_java_version" -eq 1 ]; then
-        info "Java version is in 1.8 range."
+    if [ "$java_major_version" -eq "$required_java_major_version" ]; then
+        info "Java version is in 1.8 range. ($java_major_version)"
+        valid_java_version=1
     else         
-        info "Java version is not in 1.8 range."
+        info "Java version is not in 1.8 range. ($java_major_version)"
+        valid_java_version=0
     fi
 fi
 
