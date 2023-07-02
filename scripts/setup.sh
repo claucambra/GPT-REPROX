@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 info()
@@ -68,9 +68,8 @@ else
 fi
 
 if [ "$java_exec" ]; then
-    # Version check, with numbers together (e.g. 1.8.0 is 18)
-    required_java_major_version=18
-    java_major_version=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
+    required_java_major_version=52 # 55 is Java 8
+    java_major_version=$(javap -verbose java.lang.String | grep "major version" | cut -d " " -f5)
 
     if [ "$java_major_version" -eq "$required_java_major_version" ]; then
         info "Java version is in 1.8 range. ($java_major_version)"
