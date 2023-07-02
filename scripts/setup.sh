@@ -101,12 +101,6 @@ fi
 ## Headless execution setup
 apt install x11-utils xvfb
 
-if [ -z "$DISPLAY" ]; then
-    info "Setting up headless execution display..."
-    export DISPLAY=:99
-    Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &
-fi
-
 # Clone GPT-REPROX
 if [ -d GPT-REPROX ]; then
     info "GPT-REPROX already exists. Skipping clone..."
@@ -150,13 +144,15 @@ rm -Rf MineDojo
 
 info ""
 info "Setup complete!"
-info "You can run the GPT-REPROX test by executing:"
-info "MINEDOJO_HEADLESS=1 python GPT-REPROX/test.py --cfg-path GPT-REPROX/MiniGPT4/eval_configs/minigpt4_eval.yaml"
-info "If you want to run the test with a GUI, you can do so by executing the prior command without MINEDOJO_HEADLESS=1"
-
 if [ "$java_home_set" -eq 0 ]; then
     info "JAVA_HOME is not set to Java 8 JDK!"
     info "Make sure JAVA_HOME is set to Java 8 JDK path as otheriwse MineDojo is unlikely to work correctly."
 fi
-
+info ""
+info "You can run the GPT-REPROX test by executing:"
+info "python GPT-REPROX/test.py --cfg-path GPT-REPROX/MiniGPT4/eval_configs/minigpt4_eval.yaml"
+info ""
+info "If you want to run the test without a GUI, you can do so by executing:"
+info 'export DISPLAY=:99 && Xvfb $DISPLAY -screen 0 1024x768x24 > /dev/null 2>&1 &'
+info 'MINEDOJO_HEADLESS=1 python GPT-REPROX/test.py --cfg-path GPT-REPROX/MiniGPT4/eval_configs/minigpt4_eval.yaml'
 info ""
