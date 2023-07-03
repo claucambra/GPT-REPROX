@@ -99,8 +99,8 @@ else
 fi
 
 ## Headless execution setup
-if type xvfb-run > /dev/null; then
-    apt install x11-utils xvfb
+if ! type xvfb-run > /dev/null; then
+    sudo apt install x11-utils xvfb
 fi
 
 # Clone GPT-REPROX
