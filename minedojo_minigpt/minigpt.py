@@ -35,11 +35,11 @@ class MineDojoMiniGPT4:
     # parse the text answer and extract the reward from it.
     def __parse_answer_for_reward(self, answer: str) -> int:
         try:
-            return int(answer)
+            return int(float(answer)) # Prevent failures from floats like 1.0
         except ValueError:
             # If MiniGPT returns a long-winded text answer, split it by its spaces and extract the
-            # numbers from it. Then return the last number found.
-            numbers = [int(i) for i in answer.split(" ") if i.isdigit()]
+            # numbers from it. Also work around float strings. Then return the last number found. 
+            numbers = [int(float(i)) for i in answer.split() if i.isdigit() or i.replace('.', '').isdigit()]
 
             if len(numbers) == 0:
                 print("WARNING: Received no numbers in MiniGPT answer. "
