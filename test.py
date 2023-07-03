@@ -23,7 +23,7 @@ def run_minedojo_test(args: argparse.Namespace, env: MineDojoMiniGPT4Env):
                                                  "tensorboard"))
 
     time_steps = env.max_steps * args.episode_count
-    ppo_agent.learn(total_timesteps=time_steps)
+    ppo_agent.learn(total_timesteps=time_steps, progress_bar=True)
 
 
 if __name__ == "__main__":
