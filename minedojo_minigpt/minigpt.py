@@ -14,6 +14,10 @@ from MiniGPT4.minigpt4.conversation.conversation import Chat
 from MiniGPT4.minigpt4.models.mini_gpt4 import MiniGPT4
 from MiniGPT4.minigpt4.processors import Blip2ImageEvalProcessor
 
+MIN_REWARD = -1
+MAX_REWARD = 1
+COMPLETION_REWARD = 10
+
 class MineDojoMiniGPT4:
     def __init__(self, args: argparse.Namespace):
         cfg = Config(args)
@@ -38,8 +42,19 @@ class MineDojoMiniGPT4:
             return int(float(answer)) # Prevent failures from floats like 1.0
         except ValueError:
             # If MiniGPT returns a long-winded text answer, split it by its spaces and extract the
-            # numbers from it. Also work around float strings. Then return the last number found. 
-            numbers = [int(float(i)) for i in answer.split() if i.isdigit() or i.replace('.', '').isdigit()]
+            # numbers from it. Also work around float strings. Then return the last number found.
+
+            numbers: list[int] = []
+
+            for val in answer.split():
+                if val.isdigit():
+                    numbers.append(int(float(val)))
+                    continue
+
+                dotless_val = val.replace('.', '')
+                first_split_val = dotless_val[0]
+                if first_split_val.isdigit():
+                    numbers.append(int(float(first_split_val)))
 
             if len(numbers) == 0:
                 print("WARNING: Received no numbers in MiniGPT answer. "
@@ -48,9 +63,14 @@ class MineDojoMiniGPT4:
             elif len(numbers) == 1:
                 return numbers[0]
             else:
-                print("WARNING: Received multiple numbers in MiniGPT answer. "
-                      "Full answer was: {}. Returning last number as reward.".format(answer))
-                return numbers[-1]
+                for number in reversed(numbers):
+                    if (number >= MIN_REWARD and number <= MAX_REWARD) or number == COMPLETION_REWARD:
+                        print("WARNING: Received multiple numbers in MiniGPT answer. "
+                              "Full answer was: {}. Returning {} as reward.".format(answer, number))
+                        return number
+
+        # If we get here, we couldn't find a good number in the answer. Return 0 as fallback reward.
+        return 0
 
     def current_reward(self, task: str) -> int:
         prompt = build_current_task_prompt(task)

@@ -12,12 +12,9 @@ from typing import Any, Optional
 from gymnasium import Env, spaces
 from gymnasium.envs.registration import EnvSpec
 
-from .minigpt import MineDojoMiniGPT4
+from .minigpt import MineDojoMiniGPT4, MIN_REWARD, MAX_REWARD, COMPLETION_REWARD
 from .gym_compat import convert_minedojo_space
 
-MIN_REWARD = -1
-MAX_REWARD = 1
-COMPLETION_REWARD = 10
 ACTION_USE_IDX = 5
 
 class MineDojoMiniGPT4Env(Env):
