@@ -168,9 +168,9 @@ class MineDojoMiniGPT4Env(Env):
         # Reward established as proximity to goal completion
         reward = self.__minigpt.current_reward(self.__task_string)
         completed = reward == COMPLETION_REWARD
+        print(f"Received reward {reward} from MiniGPT.")
         assert (reward >= MIN_REWARD and reward <= MAX_REWARD) or completed, \
                f"Received unexpected reward: {reward}"
-        print(f"Received reward {reward} from MiniGPT.")
         reward -= 1 # Penalise for each step taken
 
         self.__cur_step += 1
