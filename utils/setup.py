@@ -4,7 +4,8 @@
 import numpy as np
 import torch
 import random
-
+import argparse
+import os
 
 def set_device() -> torch.device:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -19,3 +20,9 @@ def set_seed(seed: int):
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
+
+
+def setup_save_dir(args: argparse.Namespace):
+    save_dir = os.path.join(args.save_results_dir, args.task)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)

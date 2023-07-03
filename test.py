@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import argparse
+import os
 
 from stable_baselines3 import PPO
 
 from minedojo_minigpt.setup import setup_minedojo_gpt_env
 from minedojo_minigpt.env import MineDojoMiniGPT4Env
 
-from utils.setup import set_device, set_seed
+from utils.setup import set_device, set_seed, setup_save_dir
 
 
 def run_minedojo_test(args: argparse.Namespace, env: MineDojoMiniGPT4Env):
@@ -41,6 +42,7 @@ if __name__ == "__main__":
 
     device = set_device()
     set_seed(args.seed)
+    setup_save_dir(args)
 
     env = setup_minedojo_gpt_env(args, device, img_only=True)
     run_minedojo_test(args, env)
