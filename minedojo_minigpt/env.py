@@ -59,7 +59,7 @@ class MineDojoMiniGPT4Env(Env):
         self.__first_reset = True
         self.__reset_cmds = ["/kill @e[type=!player]", "/clear", "/kill @e[type=item]"]
 
-        self.__task_string = task_id + " " + target_name + " " + str(target_quantity)
+        self.__task_string = task_id + " " + str(target_quantity) + " " + target_name
         self.__task_string = self.__task_string + "s" if target_quantity > 1 else self.__task_string
         self.__minigpt = MineDojoMiniGPT4(cmd_args)
 
