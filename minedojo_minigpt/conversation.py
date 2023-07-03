@@ -33,7 +33,7 @@ You must exclusively provide a numerical response.
 There must be no description, explanation, or reasoning included in your answer.
 """
 
-CURRENT_STATE_PROMPT = "Generate a score from 0-100 based on how close you think the player is to completing the task. "
+CURRENT_STATE_PROMPT = "Please provide a score for how relevant the information provided is to the task of "
 
 
 def build_current_task_prompt(task: str) -> str:
