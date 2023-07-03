@@ -159,14 +159,14 @@ class MineDojoMiniGPT4Env(Env):
     def step(self, act: np.ndarray) -> tuple[dict, float, bool, bool, dict]:
         act = self.__guarded_action(act)
 
-        obs, reward, done, info = self.base_env.step(act)
+        obs, _, done, info = self.base_env.step(act)
         rgb_image = self.obs_rgb_transpose(obs)
 
         self.__minigpt.upload_rgb_array(rgb_image)
 
         # Reward established as proximity to goal completion, 0 - 100
-        #reward = self.__minigpt.current_reward(self.__task_string)
-        #assert reward >= MIN_REWARD and reward <= MAX_REWARD
+        reward = self.__minigpt.current_reward(self.__task_string)
+        assert reward >= MIN_REWARD and reward <= MAX_REWARD
 
         self.__cur_step += 1
 
