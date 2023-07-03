@@ -45,7 +45,7 @@ class ConversationWithImages(Conversation):
                 limit_diff -= 1
 
     def __clean_up_convo_img_limits(self) -> None:
-        if self.over_img_limit():
+        if not self.over_img_limit():
             return
         
         self.__clean_up_imgs()
@@ -65,9 +65,9 @@ class ConversationWithImages(Conversation):
         if self.image_limit == 0:
             return
 
-        self.__clean_up_convo_img_limits()
         self.__images.append(image)
         self.append_message(self.roles[0], IMAGE_MARKER_STRING)
+        self.__clean_up_convo_img_limits()
 
     def copy(self) -> "ConversationWithImages":
         convo = ConversationWithImages(system=self.system,

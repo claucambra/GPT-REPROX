@@ -75,7 +75,6 @@ class MineDojoMiniGPT4:
     def upload_img(self, rgb_image: Image.Image):
         image = self.__gpt.vis_processor(rgb_image).unsqueeze(0).to(self.__gpt.device)
         image_emb, _ = self.__gpt.model.encode_img(image)
-
         self.__gpt_conversation.add_image(image_emb)
 
     def upload_rgb_array(self, rgb_image_array: np.ndarray):
