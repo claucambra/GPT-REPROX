@@ -50,6 +50,13 @@ class ConversationWithImages(Conversation):
         
         self.__clean_up_imgs()
         self.__clean_up_img_convo_markers()
+
+        new_split_prompt = self.get_prompt().split(IMAGE_MARKER_STRING)
+        num_new_image_tags = len(new_split_prompt)-1
+        num_new_images = len(self.__images)
+
+        assert num_new_image_tags == num_new_images, \
+               f"Should have matching image tags {num_new_image_tags} and images {num_new_images}"
         
     def over_img_limit(self):
         return self.image_limit > 0 and len(self.images) >= self.image_limit
