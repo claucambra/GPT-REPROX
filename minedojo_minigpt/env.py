@@ -17,6 +17,7 @@ from .gym_compat import convert_minedojo_space
 
 MIN_REWARD = -1
 MAX_REWARD = 1
+COMPLETION_REWARD = 10
 ACTION_USE_IDX = 5
 
 class MineDojoMiniGPT4Env(Env):
@@ -166,13 +167,15 @@ class MineDojoMiniGPT4Env(Env):
 
         # Reward established as proximity to goal completion
         reward = self.__minigpt.current_reward(self.__task_string)
-        assert reward >= MIN_REWARD and reward <= MAX_REWARD
+        completed = reward == COMPLETION_REWARD
+        assert (reward >= MIN_REWARD and reward <= MAX_REWARD) or completed, \
+               f"Received unexpected reward: {reward}"
         print(f"Received reward {reward} from MiniGPT.")
         reward -= 1 # Penalise for each step taken
 
         self.__cur_step += 1
 
-        terminated = done or obs["life_stats"]["life"] == 0
+        terminated = done or completed or obs["life_stats"]["life"] == 0
         truncated = self.__cur_step >= self.max_steps
 
         if self.save_rgb:

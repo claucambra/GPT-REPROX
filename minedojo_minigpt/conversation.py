@@ -10,7 +10,7 @@ These images are of unmodded Minecraft being played in survival mode from the pl
 These images will show the player attempting to complete a task.
 The images are in sequential order, with the last image provided being the latest.
 Firstly, you must identify and remember the objects within the image.
-You will be asked to provide a numerical score ranging from -1 to 1 based on how close the player is to completing a task.
+You will be asked to provide an integer score ranging from -1 to 1 based on how close the player is to completing a task.
 You will be told what task the player is trying to complete.
 Use the provided images to formulate the score.
 
@@ -20,12 +20,10 @@ Your reply must be strictly a number between -1 and 1 inclusive.
 
 If within the image the location, objects, and player actions are not at all related to the task, you must reply only with the number -1.
 If the player is performing a different task, or you cannot see any relevant information in the image, you must also reply only with the number -1.
+If within the image the player is making no clear progress towards completing the task, reply only with the number 0.
+If within the image all of the location, objects and actions are related to this task, reply only with the number 1.
 
-If within the image the location, objects, player actions or some combination are related to or are relevant to the task, provide a score from 0 to 1.
-This score must be based on the relevance of the image to performing this task.
-Images with a more direct relevance to the task must get a higher score.
-
-If within the image all of the location, objects and actions are related to this task, give a score from 0.5 to 1 based on how complete the task appears to be.
+If within the image the task is shown to be completed, reply only with the number 10.
 
 When assesing these scores, do so with reference to the rules and mechanics of traditional, unmodified, survival mode Minecraft.
 
