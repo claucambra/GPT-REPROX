@@ -39,6 +39,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--task", type=str, default="craft_stick")
     parser.add_argument("--episode-count", type=int, default=200)
+    parser.add_argument("--max-episode-steps", type=int, default=500)
     parser.add_argument("--seed", type=int, default=3)
     parser.add_argument("--save-results-dir", type=str, default="results")
     args = parser.parse_args()
