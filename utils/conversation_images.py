@@ -27,7 +27,7 @@ class ConversationWithImages(Conversation):
         self.__clean_up_convo_img_limits()
 
     def __clean_up_imgs(self) -> None:
-        while len(self.__images) >= self.image_limit and self.image_limit >= 0:
+        while len(self.__images) > self.image_limit and self.image_limit >= 0:
             self.__images.pop(0)
 
     def __clean_up_img_convo_markers(self) -> None:
