@@ -61,6 +61,10 @@ class MineDojoMiniGPT4:
         convo_copy = self.__gpt_conversation.copy()
         self.__gpt.ask(prompt, convo_copy)
 
+        # Debug
+        print("Asked: {}".format(prompt))
+        print("Full prompt: {}".format(convo_copy.get_prompt()))
+
         text_reply, _ = self.__gpt.answer(convo_copy, convo_copy.images, max_length=20000)
         assert isinstance(text_reply, str)
         

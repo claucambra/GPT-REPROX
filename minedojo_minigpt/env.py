@@ -164,9 +164,13 @@ class MineDojoMiniGPT4Env(Env):
 
         self.__minigpt.upload_rgb_array(rgb_image)
 
+        # Debug
+        print("About to ask for reward.")
+
         # Reward established as proximity to goal completion, 0 - 100
         reward = self.__minigpt.current_reward(self.__task_string)
         assert reward >= MIN_REWARD and reward <= MAX_REWARD
+        print (f"Received reward {reward}")
 
         self.__cur_step += 1
 
