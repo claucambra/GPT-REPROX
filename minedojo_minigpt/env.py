@@ -172,7 +172,7 @@ class MineDojoMiniGPT4Env(Env):
 
         self.__cur_step += 1
 
-        terminated = done or obs["life_stats"]["life"] == 0 or reward == MAX_REWARD
+        terminated = done or obs["life_stats"]["life"] == 0
         truncated = self.__cur_step >= self.max_steps
 
         if self.save_rgb:
