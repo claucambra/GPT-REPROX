@@ -15,8 +15,8 @@ from gymnasium.envs.registration import EnvSpec
 from .minigpt import MineDojoMiniGPT4
 from .gym_compat import convert_minedojo_space
 
-MIN_REWARD = 0
-MAX_REWARD = 100
+MIN_REWARD = -1
+MAX_REWARD = 1
 ACTION_USE_IDX = 5
 
 class MineDojoMiniGPT4Env(Env):
@@ -164,13 +164,10 @@ class MineDojoMiniGPT4Env(Env):
 
         self.__minigpt.upload_rgb_array(rgb_image)
 
-        # Debug
-        print("About to ask for reward.")
-
-        # Reward established as proximity to goal completion, 0 - 100
+        # Reward established as proximity to goal completion
         reward = self.__minigpt.current_reward(self.__task_string)
         assert reward >= MIN_REWARD and reward <= MAX_REWARD
-        print (f"Received reward {reward}")
+        print(f"Received reward {reward}")
 
         self.__cur_step += 1
 
