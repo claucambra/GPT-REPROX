@@ -44,7 +44,7 @@ class MineDojoMiniGPT4Conversation(ConversationWithImages):
                  roles: list[str] = ["Human", "Assistant"],
                  messages: list[list[str]] = [],
                  offset: int = 2,
-                 img_limit: int = 3):
+                 img_limit: int = 1):
         
         super().__init__(system, roles, messages, offset)
         self.image_limit = img_limit
