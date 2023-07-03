@@ -67,6 +67,7 @@ class ConversationWithImages(Conversation):
 
         self.__clean_up_convo_img_limits()
         self.__images.append(image)
+        self.append_message(self.roles[0], IMAGE_MARKER_STRING)
 
     def copy(self) -> "ConversationWithImages":
         convo = ConversationWithImages(system=self.system,
