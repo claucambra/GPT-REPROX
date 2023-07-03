@@ -174,6 +174,7 @@ class MineDojoMiniGPT4Env(Env):
 
         terminated = done or completed or obs["life_stats"]["life"] == 0
         truncated = self.__cur_step >= self.max_steps
+        info["TimeLimit.truncated"] = truncated
 
         if self.save_rgb:
             self.rgb_list.append(rgb_image)

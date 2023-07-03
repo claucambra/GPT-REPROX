@@ -18,6 +18,7 @@ def run_minedojo_test(args: argparse.Namespace, env: MineDojoMiniGPT4Env):
                     device=env.device, 
                     seed=env.seed, 
                     verbose=True,
+                    n_steps=env.max_steps,
                     tensorboard_log=os.path.join(args.save_results_dir,
                                                  args.task,
                                                  "tensorboard"))
